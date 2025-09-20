@@ -1,103 +1,78 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import React, { useEffect } from "react";
+import Link from "next/link";
+import TextPressure from "./(ui)/text-pressure";
+import { Button } from "@/components/ui/button";
+
+export default function App(): React.JSX.Element {
+  useEffect(() => {
+    const interBubble = document.querySelector(".interactive"); //* Selects the DOM element with the class 'interactive'
+    let curX = 0; //* Initializing the current X coordinate to 0
+    let curY = 0; //* Initializing the current Y coordinate to 0
+    let tgX = 0; //* Initializing the target X coordinate to 0
+    let tgY = 0; //* Initializing the target Y coordinate to 0
+    //? Function: smoothly move interactive bubble towards the target coordinates.
+    function move() {
+      curX += (tgX - curX) / 20; //* Update current X by moving fraction of distance towards target X
+      curY += (tgY - curY) / 20; //* Update current Y by moving fraction of distance towards target Y
+      //* Check if the interactive element is found
+      if (interBubble) {
+        // @ts-expect-error - CSS Transform
+        //* Apply a CSS transform to move the element
+        interBubble.style.transform = `translate(${Math.round(curX)}px, ${Math.round(curY)}px)`;
+      }
+      //* Request the next animation frame & call move function again
+      requestAnimationFrame(() => {
+        move();
+      });
+    }
+    //* Add an event listener to the window object to listen for mouse movements
+    window.addEventListener("mousemove", (event) => {
+      tgX = event.clientX; //* Update the target X coordinate to the current mouse X position
+      tgY = event.clientY; //* Update the target Y coordinate to the current mouse Y position
+    });
+    move(); //* Start the move function when the component mounts
+  }, []); //? Empty dependency array means this effect runs once, when component mounts
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <main>
+      <div className="landing-text__container relative z-0">
+      <TextPressure
+        text="#PROJECT"
+        flex={true}
+        alpha={false}
+        stroke={false}
+        width={true}
+        weight={true}
+        italic={true}
+        textColor="#ffffff"
+        strokeColor="#ff0000"
+        minFontSize={30}
+        maxFontSize={150}
+      />
+        <Link className="mt-5" href="/#"><Button className="btn-theme tracking-in-expand" variant="ghost">Coming Soon!</Button></Link>
+      </div>
+      <div className="gradient-background__container"> {/* Container with a gradient background */}
+        <svg xmlns="http://www.w3.org/2000/svg"> {/* SVG element for filter effects */}
+          <defs> {/* Definitions for reusable elements within the SVG */}
+            <filter id="goo"> {/* Filter with id 'goo' */}
+              <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" /> {/* Apply a Gaussian blur to the source graphic */}
+              {/* Apply a color matrix to create a 'gooey' effect */}
+              <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" result="goo"/>
+              <feBlend in="SourceGraphic" in2="goo" /> {/* Blend the original graphic with the goo effect */}
+            </filter>
+          </defs>
+        </svg>
+        <div> {/* Placeholder divs, for graphicS elements */}
+          <div className="g1"></div>
+          <div className="g2"></div>
+          <div className="g3"></div>
+          <div className="g4"></div>
+          <div className="g5"></div>
+          <div className="interactive"></div> {/* Interactive div that will follow the mouse movements */}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </div>
+    </main>
   );
 }
